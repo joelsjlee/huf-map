@@ -9,7 +9,6 @@
 
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
-    <!--[if lte IE 8]><link rel="stylesheet" href="https://cdn.leafletjs.com/leaflet-0.7.2/leaflet.ie.css" /><![endif]-->
 
     <link rel="stylesheet" href="leaflet-sidebar.css" />
 
@@ -41,7 +40,7 @@
         <div class="sidebar-tabs">
             <ul role="tablist">
                 <li><a href="#home" role="tab"><i class="fa fa-bars"></i></a></li>
-                <li><a href="#profile" role="tab"><i class="fa fa-user"></i></a></li>
+                <li><a href="#about" role="tab"><i class="fa fa-user"></i></a></li>
                 <li class="disabled"><a href="#messages" role="tab"><i class="fa fa-envelope"></i></a></li>
                 <li><a href="https://github.com/Turbo87/sidebar-v2" role="tab" target="_blank"><i
                             class="fa fa-github"></i></a></li>
@@ -56,49 +55,34 @@
         <div class="sidebar-content">
             <div class="sidebar-pane" id="home">
                 <h1 class="sidebar-header">
-                    sidebar-v2
+                    History Unfolded Map
                     <span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
                 </h1>
 
-                <p>A responsive sidebar for mapping libraries like <a href="http://leafletjs.com/">Leaflet</a> or <a
-                        href="http://openlayers.org/">OpenLayers</a>.</p>
-
-                <p class="lorem">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
-                    invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo
-                    duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor
-                    sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
-                    invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo
-                    duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor
-                    sit amet.</p>
-
-                <p class="lorem">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
-                    invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo
-                    duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor
-                    sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
-                    invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo
-                    duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor
-                    sit amet.</p>
-
-                <p class="lorem">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
-                    invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo
-                    duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor
-                    sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
-                    invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo
-                    duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor
-                    sit amet.</p>
-
-                <p class="lorem">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
-                    invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo
-                    duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor
-                    sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
-                    invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo
-                    duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor
-                    sit amet.</p>
+                <p>Display Markers Below
+                </p>
+                <div class="lorems" id="lorema">
+                <p class="lorem">
+                    Newspaper: </p>
+                </div>
             </div>
 
-            <div class="sidebar-pane" id="profile">
-                <h1 class="sidebar-header">Profile<span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
+            <div class="sidebar-pane" id="about">
+                <h1 class="sidebar-header">About<span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
                 </h1>
+
+                <p>A map representation of the History Unfolded dataset, with sidebar and geosearching functionalities.
+                </p>
+                <div class="lorems" id="lorema">
+                <p class="lorem">
+                    History Unfolded is a project of the United States Holocaust Memorial Museum in Washington, DC. It
+                    asks students, teachers, and history buffs throughout the United States what was possible for
+                    Americans to have known about the Holocaust as it was happening and how Americans responded.
+                    Participants look in local newspapers for news and opinion about 46 different Holocaust-era events
+                    that took place in the United States and Europe, and submit articles they find to a national
+                    database, as well as information about newspapers that did not cover events. History Unfolded raises
+                    questions for scholars and will inform the Museum's initiative on Americans and the Holocaust.</p>
+                </div>
             </div>
 
             <div class="sidebar-pane" id="messages">
@@ -124,7 +108,7 @@
         var GeoSearchControl = window.GeoSearch.GeoSearchControl;
         var OpenStreetMapProvider = window.GeoSearch.OpenStreetMapProvider;
         var map = L.map('map');
-        map.setView([51.2, 7], 9);
+        map.setView([35, -98], 4);
 
         L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 18,
@@ -132,6 +116,7 @@
         }).addTo(map);
 
         var sidebar = L.control.sidebar('sidebar').addTo(map);
+        sidebar.open('home');
 
         var marker = L.marker([51.2, 7]).addTo(map).on('click', function () {
             sidebar.open('home');
@@ -143,7 +128,16 @@
 
         var geojsonFeatures = output["features"];
 
-        L.geoJSON(geojsonFeatures).addTo(map);
+        function log(feature, layer) {
+            layer.on('click', function (e) {
+            var headline = feature.properties.Headline;
+            document.getElementById("lorema").innerHTML = headline;
+            });
+        }
+
+        L.geoJSON(geojsonFeatures, {
+            onEachFeature: log
+        }).addTo(map);
 
 
 
