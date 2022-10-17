@@ -41,7 +41,7 @@
             <ul role="tablist">
                 <li><a href="#home" role="tab"><i class="fa fa-bars"></i></a></li>
                 <li><a href="#about" role="tab"><i class="fa fa-user"></i></a></li>
-                <li class="disabled"><a href="#messages" role="tab"><i class="fa fa-envelope"></i></a></li>
+                <li><a href="#filters" role="tab"><i class="fa fa-envelope"></i></a></li>
                 <li><a href="https://github.com/Turbo87/sidebar-v2" role="tab" target="_blank"><i
                             class="fa fa-github"></i></a></li>
             </ul>
@@ -85,9 +85,17 @@
                 </div>
             </div>
 
-            <div class="sidebar-pane" id="messages">
-                <h1 class="sidebar-header">Messages<span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
+            <div class="sidebar-pane" id="filters">
+                <h1 class="sidebar-header">Filters<span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
                 </h1>
+                <div>
+                    <input type="checkbox" id="coding" name="interest" value="coding" />
+                    <label for="coding">Coding</label>
+                  </div>
+                  <div>
+                    <input type="checkbox" id="music" name="interest" value="music" />
+                    <label for="music">Music</label>
+                  </div>
             </div>
 
             <div class="sidebar-pane" id="settings">
@@ -130,9 +138,12 @@
 
         function log(feature, layer) {
             layer.on('click', function (e) {
-            var headline = feature.properties.Headline;
-            document.getElementById("lorema").innerHTML = headline;
+            var url = feature.properties["Page URL"];
+            document.getElementById("lorema").innerHTML = '<iframe src="replacer">'.replace("replacer", url);
+    
+            map.flyTo(e.latlng, 9);
             });
+            
         }
 
         L.geoJSON(geojsonFeatures, {
