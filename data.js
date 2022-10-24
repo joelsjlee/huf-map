@@ -1,4 +1,4 @@
-var output = {
+var data = {
     "type": "FeatureCollection",
     "features": [
         {

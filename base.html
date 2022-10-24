@@ -2,36 +2,16 @@
 <html lang="en">
 
 <head>
-    <title>sidebar-v2 example</title>
+    <title>HUF Map Vanilla Leaflet</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
 
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" >
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
-
     <link rel="stylesheet" href="leaflet-sidebar.css" />
-
     <link rel="stylesheet" href="https://unpkg.com/leaflet-geosearch@3.6.1/dist/geosearch.css" />
-
-    <style>
-        body {
-            padding: 0;
-            margin: 0;
-        }
-
-        html,
-        body,
-        #map {
-            height: 100%;
-            font: 10pt "Helvetica Neue", Arial, Helvetica, sans-serif;
-        }
-
-        .lorem {
-            font-style: italic;
-            color: #AAA;
-        }
-    </style>
+    <link rel="stylesheet" href="base.css" />
 </head>
 
 <body>
@@ -42,10 +22,7 @@
                 <li><a href="#home" role="tab"><i class="fa fa-bars"></i></a></li>
                 <li><a href="#about" role="tab"><i class="fa fa-user"></i></a></li>
                 <li><a href="#filters" role="tab"><i class="fa fa-envelope"></i></a></li>
-                <li><a href="https://github.com/Turbo87/sidebar-v2" role="tab" target="_blank"><i
-                            class="fa fa-github"></i></a></li>
             </ul>
-
             <ul role="tablist">
                 <li><a href="#settings" role="tab"><i class="fa fa-gear"></i></a></li>
             </ul>
@@ -58,12 +35,34 @@
                     History Unfolded Map
                     <span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
                 </h1>
-
-                <p>Display Markers Below
-                </p>
-                <div class="lorems" id="lorema">
-                <p class="lorem">
-                    Newspaper: </p>
+                <h3 id="front-headline"></h3>
+                <div class="lorem" id="lorema">
+                    <h4>Newspaper</h4>
+                    <p id="newspaper"></p>
+                    <h4>Location</h4>
+                    <p id="location"></p>
+                    <h4>Publication Date</h4>
+                    <p id="publication-date"></p>
+                    <h4>Page Section and Number</h4>
+                    <p id="page-section"></p>
+                    <h4>Headline</h4>
+                    <p id="headline"></p>
+                    <h4>Sub-Headline</h4>
+                    <p id="subheadline"></p>
+                    <h4>Author/Byline</h4>
+                    <p id="author"></p>
+                    <h4>Event</h4>
+                    <p id="event"></p>
+                    <h4>History Unfolded Contributor</h4>
+                    <p id="contributor"></p>
+                    <h4>Location of Research</h4>
+                    <p id="location"></p>
+                    <h4>User Comments</h4>
+                    <p id="user"></p>
+                    <h4>Community Manager Comments</h4>
+                    <p id="community-manager"></p>
+                    <h4>Page URL</h4>
+                    <p id="url"></p>
                 </div>
             </div>
 
@@ -74,14 +73,18 @@
                 <p>A map representation of the History Unfolded dataset, with sidebar and geosearching functionalities.
                 </p>
                 <div class="lorems" id="lorema">
-                <p class="lorem">
-                    History Unfolded is a project of the United States Holocaust Memorial Museum in Washington, DC. It
-                    asks students, teachers, and history buffs throughout the United States what was possible for
-                    Americans to have known about the Holocaust as it was happening and how Americans responded.
-                    Participants look in local newspapers for news and opinion about 46 different Holocaust-era events
-                    that took place in the United States and Europe, and submit articles they find to a national
-                    database, as well as information about newspapers that did not cover events. History Unfolded raises
-                    questions for scholars and will inform the Museum's initiative on Americans and the Holocaust.</p>
+                    <p>
+                        History Unfolded is a project of the United States Holocaust Memorial Museum in Washington, DC.
+                        It
+                        asks students, teachers, and history buffs throughout the United States what was possible for
+                        Americans to have known about the Holocaust as it was happening and how Americans responded.
+                        Participants look in local newspapers for news and opinion about 46 different Holocaust-era
+                        events
+                        that took place in the United States and Europe, and submit articles they find to a national
+                        database, as well as information about newspapers that did not cover events. History Unfolded
+                        raises
+                        questions for scholars and will inform the Museum's initiative on Americans and the Holocaust.
+                    </p>
                 </div>
             </div>
 
@@ -91,11 +94,11 @@
                 <div>
                     <input type="checkbox" id="coding" name="interest" value="coding" />
                     <label for="coding">Coding</label>
-                  </div>
-                  <div>
+                </div>
+                <div>
                     <input type="checkbox" id="music" name="interest" value="music" />
                     <label for="music">Music</label>
-                  </div>
+                </div>
             </div>
 
             <div class="sidebar-pane" id="settings">
@@ -110,52 +113,8 @@
     <script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
     <script src="leaflet-sidebar.js"></script>
     <script src="https://unpkg.com/leaflet-geosearch@3.6.1/dist/geosearch.umd.js"></script>
-    <script src="output.js"></script>
-
-    <script>
-        var GeoSearchControl = window.GeoSearch.GeoSearchControl;
-        var OpenStreetMapProvider = window.GeoSearch.OpenStreetMapProvider;
-        var map = L.map('map');
-        map.setView([35, -98], 4);
-
-        L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 18,
-            attribution: 'Map data &copy; OpenStreetMap contributors'
-        }).addTo(map);
-
-        var sidebar = L.control.sidebar('sidebar').addTo(map);
-        sidebar.open('home');
-
-        var marker = L.marker([51.2, 7]).addTo(map).on('click', function () {
-            sidebar.open('home');
-        });
-        var searchControl = new GeoSearchControl({
-            provider: new OpenStreetMapProvider(),
-            style: 'bar',
-        });
-
-        var geojsonFeatures = output["features"];
-
-        function log(feature, layer) {
-            layer.on('click', function (e) {
-            var url = feature.properties["Page URL"];
-            document.getElementById("lorema").innerHTML = '<iframe src="replacer">'.replace("replacer", url);
-    
-            map.flyTo(e.latlng, 9);
-            });
-            
-        }
-
-        L.geoJSON(geojsonFeatures, {
-            onEachFeature: log
-        }).addTo(map);
-
-
-
-        map.addControl(searchControl);
-
-
-    </script>
+    <script src="data.js"></script>
+    <script src="main.js"></script>
 </body>
 
 </html>
