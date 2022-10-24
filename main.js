@@ -127,7 +127,7 @@ function log(feature, layer) {
         map.flyTo(e.latlng, 9);
         sidebar.open('home')
     });
-    layer.bindPopup('<h2>'+feature.properties["Headline"]+'</h2><p> '+feature.properties["Sub Headline"]+'</p>')
+    layer.bindPopup('<h2>'+feature.properties["Headline"]+'</h2><p> '+feature.properties["Sub Headline"]+'<br>' + '<em>' + feature.properties["Publication Date"] + '</em>'+ '</p>' )
 }
 
 L.geoJSON(geojsonFeatures, {
