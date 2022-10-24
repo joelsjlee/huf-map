@@ -2,7 +2,7 @@
 var GeoSearchControl = window.GeoSearch.GeoSearchControl;
 var OpenStreetMapProvider = window.GeoSearch.OpenStreetMapProvider;
 var map = L.map('map');
-map.setView([35, -98], 4);
+map.setView([40, -99], 5);
 
 // Adding tile layer to map
 L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -10,9 +10,89 @@ L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: 'Map data &copy; OpenStreetMap contributors'
 }).addTo(map);
 
+function getColor(d) {
+    return d > 1000 ? '#800026' :
+           d > 500  ? '#BD0026' :
+           d > 200  ? '#E31A1C' :
+           d > 100  ? '#FC4E2A' :
+           d > 50   ? '#FD8D3C' :
+           d > 20   ? '#FEB24C' :
+           d > 10   ? '#FED976' :
+                      '#FFEDA0';
+}
+
+function style(feature) {
+    return {
+        fillColor: getColor(feature.properties.density),
+        weight: 2,
+        opacity: 1,
+        color: 'white',
+        dashArray: '3',
+        fillOpacity: 0.7
+    };
+}
+
+function highlightFeature(e) {
+    var layer = e.target;
+
+    layer.setStyle({
+        weight: 5,
+        color: '#666',
+        dashArray: '',
+        fillOpacity: 0.7
+    });
+
+    if (!L.Browser.opera) {
+        layer.bringToFront();
+    }
+
+    info.update(layer.feature.properties);
+}
+
+function resetHighlight(e) {
+    geojson.resetStyle(e.target);
+    info.update();
+}
+
+
+
+function zoomToFeature(e) {
+    map.fitBounds(e.target.getBounds());
+}
+
+function onEachFeature(feature, layer) {
+    layer.on({
+        mouseover: highlightFeature,
+        mouseout: resetHighlight,
+        click: zoomToFeature
+    });
+}
+
+geojson = L.geoJson(statesData, {
+    style: style,
+    onEachFeature: onEachFeature
+}).addTo(map);
+
+var info = L.control({position:"topleft"});
+
+info.onAdd = function (map) {
+    this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+    this.update();
+    return this._div;
+};
+
+// method that we will use to update the control based on feature properties passed
+info.update = function (props) {
+    this._div.innerHTML = '<h4>US States</h4>' +  (props ?
+        '<b>' + props.name 
+        : 'Hover over a state');
+};
+
+info.addTo(map);
+
+
 // Adding Side Bar to map
 var sidebar = L.control.sidebar('sidebar').addTo(map);
-sidebar.open('home');
 
 // Adding GeoSearch to Map
 var searchControl = new GeoSearchControl({
@@ -47,6 +127,7 @@ function log(feature, layer) {
         map.flyTo(e.latlng, 9);
         sidebar.open('home')
     });
+    layer.bindPopup('<h2>'+feature.properties["Headline"]+'</h2><p> '+feature.properties["Sub Headline"]+'</p>')
 }
 
 L.geoJSON(geojsonFeatures, {
