@@ -12,13 +12,13 @@ L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 function getColor(d) {
     return d > 1000 ? '#800026' :
-           d > 500  ? '#BD0026' :
-           d > 200  ? '#E31A1C' :
-           d > 100  ? '#FC4E2A' :
-           d > 50   ? '#FD8D3C' :
-           d > 20   ? '#FEB24C' :
-           d > 10   ? '#FED976' :
-                      '#FFEDA0';
+        d > 500 ? '#BD0026' :
+            d > 200 ? '#E31A1C' :
+                d > 100 ? '#FC4E2A' :
+                    d > 50 ? '#FD8D3C' :
+                        d > 20 ? '#FEB24C' :
+                            d > 10 ? '#FED976' :
+                                '#FFEDA0';
 }
 
 function style(feature) {
@@ -73,7 +73,7 @@ geojson = L.geoJson(statesData, {
     onEachFeature: onEachFeature
 }).addTo(map);
 
-var info = L.control({position:"topleft"});
+var info = L.control({ position: "topleft" });
 
 info.onAdd = function (map) {
     this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
@@ -83,8 +83,8 @@ info.onAdd = function (map) {
 
 // method that we will use to update the control based on feature properties passed
 info.update = function (props) {
-    this._div.innerHTML = '<h4>US States</h4>' +  (props ?
-        '<b>' + props.name 
+    this._div.innerHTML = '<h4>US States</h4>' + (props ?
+        '<b>' + props.name
         : 'Hover over a state');
 };
 
@@ -118,18 +118,69 @@ function log(feature, layer) {
         document.getElementById("headline").innerHTML = feature.properties["Headline"];
         document.getElementById("subheadline").innerHTML = feature.properties["Sub Headline"];
         document.getElementById("author").innerHTML = feature.properties["Byline"];
+        document.getElementById("article").innerHTML = feature.properties["Article Type"];
         document.getElementById("event").innerHTML = feature.properties["Event"];
         document.getElementById("contributor").innerHTML = feature.properties["Contributor"];
         document.getElementById("user").innerHTML = feature.properties["User Comments"];
         document.getElementById("community-manager").innerHTML = feature.properties["CM Comments"];
-        document.getElementById("url").innerHTML = "<a href="+feature.properties["Page URL"]+" target=_'blank'>" +feature.properties["Page URL"]+ "</a>"; 
+        document.getElementById("url").innerHTML = "<a href=" + feature.properties["Page URL"] + " target=_'blank'>" + feature.properties["Page URL"] + "</a>";
         document.getElementById("front-headline").innerHTML = feature.properties["Headline"];
         map.flyTo(e.latlng, 9);
         sidebar.open('home')
     });
-    layer.bindPopup('<h2>'+feature.properties["Headline"]+'</h2><p> '+feature.properties["Sub Headline"]+'<br>' + '<em>' + feature.properties["Publication Date"] + '</em>'+ '</p>' )
+    layer.bindPopup('<h2>' + feature.properties["Headline"] + '</h2><p> ' + feature.properties["Sub Headline"] + '<br>' + '<em>' + feature.properties["Publication Date"] + '</em>' + '</p>')
 }
 
-L.geoJSON(geojsonFeatures, {
+var allmarkers = L.geoJSON(geojsonFeatures, {
     onEachFeature: log
 }).addTo(map);
+
+$('#checkboxes input').on('click', function () {
+    var selected = [];
+    $('#checkboxes input:checked').each(function () {
+        selected.push($(this).val());
+    });
+    if (!selected.length) {
+        map.removeLayer(allmarkers);
+        allmarkers = L.geoJSON(geojsonFeatures, {
+            onEachFeature: log
+        }).addTo(map);
+    } else {
+        map.removeLayer(allmarkers);
+        allmarkers = L.geoJSON(geojsonFeatures, {
+            onEachFeature: log,
+            filter: function (feature, layer) {
+                if (selected.includes("cartoon")) {
+                    if (feature.properties["Article Type"] == "Cartoon") {
+                        return true;
+                    }
+                }
+                if (selected.includes("edop")) {
+                    if (feature.properties["Article Type"] == "Editorial or Opinion Piece") {
+                        return true;
+                    }
+                }
+                if(selected.includes("letter")) {
+                    if (feature.properties["Article Type"] == "Letter to the Editor") {
+                        return true;
+                    }
+                }
+                if(selected.includes("news")) {
+                    if (feature.properties["Article Type"] == "News Article") {
+                        return true;
+                    }
+                }
+                if(selected.includes("other")) {
+                    if (feature.properties["Article Type"] == "Other") {
+                        return true;
+                    }
+                } else {
+                    return false;
+                }
+            }
+        }).addTo(map);
+    }
+
+    console.log(selected);
+});
+
