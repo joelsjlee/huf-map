@@ -103,9 +103,10 @@ var searchControl = new GeoSearchControl({
 });
 map.addControl(searchControl);
 
-// Adding markers to map
+// Grab data from GeoJSON
 var geojsonFeatures = data["features"];
 
+// Add functionality for each marker
 function log(feature, layer) {
     layer.on('click', function (e) {
         var headline = feature.properties["Headline"];
@@ -123,7 +124,7 @@ function log(feature, layer) {
         document.getElementById("contributor").innerHTML = feature.properties["Contributor"];
         document.getElementById("user").innerHTML = feature.properties["User Comments"];
         document.getElementById("community-manager").innerHTML = feature.properties["CM Comments"];
-        document.getElementById("url").innerHTML = "<a href=" + feature.properties["Page URL"] + " target=_'blank'>" + feature.properties["Page URL"] + "</a>";
+        document.getElementById("url").innerHTML = "<a href=\"" + feature.properties["Page URL"] + "\" target='_blank'>" + feature.properties["Page URL"] + "</a>";
         document.getElementById("front-headline").innerHTML = feature.properties["Headline"];
         map.flyTo(e.latlng, 9);
         sidebar.open('home')
@@ -131,10 +132,12 @@ function log(feature, layer) {
     layer.bindPopup('<h2>' + feature.properties["Headline"] + '</h2><p> ' + feature.properties["Sub Headline"] + '<br>' + '<em>' + feature.properties["Publication Date"] + '</em>' + '</p>')
 }
 
+// Add all base markers
 var allmarkers = L.geoJSON(geojsonFeatures, {
     onEachFeature: log
 }).addTo(map);
 
+// Checkbox Functionality
 $('#checkboxes input').on('click', function () {
     var selected = [];
     $('#checkboxes input:checked').each(function () {
@@ -183,4 +186,3 @@ $('#checkboxes input').on('click', function () {
 
     console.log(selected);
 });
-
