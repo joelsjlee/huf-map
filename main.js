@@ -126,7 +126,7 @@ function log(feature, layer) {
         document.getElementById("community-manager").innerHTML = feature.properties["CM Comments"];
         document.getElementById("url").innerHTML = "<a href=\"" + feature.properties["Page URL"] + "\" target='_blank'>" + feature.properties["Page URL"] + "</a>";
         document.getElementById("front-headline").innerHTML = feature.properties["Headline"];
-        map.flyTo(e.latlng, 9);
+        // map.flyTo(e.latlng, 9);
         sidebar.open('home')
     });
     layer.bindPopup('<h2>' + feature.properties["Headline"] + '</h2><p> ' + feature.properties["Sub Headline"] + '<br>' + '<em>' + feature.properties["Publication Date"] + '</em>' + '</p>')
@@ -135,21 +135,32 @@ function log(feature, layer) {
 // Add all base markers
 var allmarkers = L.geoJSON(geojsonFeatures, {
     onEachFeature: log
-}).addTo(map);
+});
 
-// Checkbox Functionality
+var markers = L.markerClusterGroup();
+markers.addLayer(allmarkers);
+map.addLayer(markers);
+
 $('#checkboxes input').on('click', function () {
+    console.log(markers);
+    console.log(markers);  
+    console.log(map);
     var selected = [];
     $('#checkboxes input:checked').each(function () {
         selected.push($(this).val());
     });
     if (!selected.length) {
-        map.removeLayer(allmarkers);
+        markers.clearLayers();
         allmarkers = L.geoJSON(geojsonFeatures, {
             onEachFeature: log
-        }).addTo(map);
+        });
+        markers = L.markerClusterGroup();
+
+        markers.addLayer(allmarkers);
+
+        map.addLayer(markers);
     } else {
-        map.removeLayer(allmarkers);
+        markers.clearLayers();
         allmarkers = L.geoJSON(geojsonFeatures, {
             onEachFeature: log,
             filter: function (feature, layer) {
@@ -181,7 +192,12 @@ $('#checkboxes input').on('click', function () {
                     return false;
                 }
             }
-        }).addTo(map);
+        });
+        markers = L.markerClusterGroup();
+
+        markers.addLayer(allmarkers);
+
+        map.addLayer(markers);
     }
 
     console.log(selected);
