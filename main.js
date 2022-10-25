@@ -2,7 +2,7 @@
 var GeoSearchControl = window.GeoSearch.GeoSearchControl;
 var OpenStreetMapProvider = window.GeoSearch.OpenStreetMapProvider;
 var map = L.map('map');
-map.setView([40, -99], 5);
+map.setView([39, -96], 5);
 
 // Adding tile layer to map
 L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -186,3 +186,9 @@ $('#checkboxes input').on('click', function () {
 
     console.log(selected);
 });
+
+$('#refresh').on('click', function () {
+    map.setView([39, -96], 5);
+    sidebar.close();
+    map.closePopup();
+})
