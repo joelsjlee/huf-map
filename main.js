@@ -1,7 +1,7 @@
 // Setting up map and necessary libraries
 var GeoSearchControl = window.GeoSearch.GeoSearchControl;
 var OpenStreetMapProvider = window.GeoSearch.OpenStreetMapProvider;
-var map = L.map('map');
+var map = L.map('map', { preferCanvas: true });
 map.setView([39, -96], 5);
 
 // Adding tile layer to map
@@ -143,7 +143,7 @@ map.addLayer(markers);
 
 $('#checkboxes input').on('click', function () {
     console.log(markers);
-    console.log(markers);  
+    console.log(markers);
     console.log(map);
     var selected = [];
     $('#checkboxes input:checked').each(function () {
@@ -174,17 +174,17 @@ $('#checkboxes input').on('click', function () {
                         return true;
                     }
                 }
-                if(selected.includes("letter")) {
+                if (selected.includes("letter")) {
                     if (feature.properties["Article Type"] == "Letter to the Editor") {
                         return true;
                     }
                 }
-                if(selected.includes("news")) {
+                if (selected.includes("news")) {
                     if (feature.properties["Article Type"] == "News Article") {
                         return true;
                     }
                 }
-                if(selected.includes("other")) {
+                if (selected.includes("other")) {
                     if (feature.properties["Article Type"] == "Other") {
                         return true;
                     }
@@ -207,4 +207,4 @@ $('#refresh').on('click', function () {
     map.setView([39, -96], 5);
     sidebar.close();
     map.closePopup();
-})
+});
