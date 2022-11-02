@@ -1,7 +1,7 @@
 // Setting up map and necessary libraries
 var GeoSearchControl = window.GeoSearch.GeoSearchControl;
 var OpenStreetMapProvider = window.GeoSearch.OpenStreetMapProvider;
-var map = L.map('map', { preferCanvas: true });
+var map = L.map('map', { preferCanvas: false });
 map.setView([39, -96], 5);
 
 // Adding tile layer to map
@@ -137,14 +137,29 @@ var allmarkers = L.geoJSON(geojsonFeatures, {
     onEachFeature: log
 });
 
-var markers = L.markerClusterGroup();
+var markers = L.markerClusterGroup({singleMarkerMode: true});
 markers.addLayer(allmarkers);
 map.addLayer(markers);
 
-$('#checkboxes input').on('click', function () {
-    console.log(markers);
-    console.log(markers);
-    console.log(map);
+function checkpress(feature, selected) {
+    if (selected.includes("Black") || selected.includes("Jewish") || selected.includes("Spanish") || selected.includes("College") || selected.includes("Catholic")) {
+        for (i=0; i<selected.length; i++) {
+            if (feature.properties["Type"] == selected[i]) {
+                return true;
+            }
+        }
+        return false;
+    } else {
+        return true;
+    }
+    
+    
+}
+
+$('#checkboxes input').on('change', function () {
+    // console.log(markers);
+    // console.log(markers);
+    // console.log(map);
     var selected = [];
     $('#checkboxes input:checked').each(function () {
         selected.push($(this).val());
@@ -166,28 +181,32 @@ $('#checkboxes input').on('click', function () {
             filter: function (feature, layer) {
                 if (selected.includes("cartoon")) {
                     if (feature.properties["Article Type"] == "Cartoon") {
-                        return true;
+                        return checkpress(feature, selected);
                     }
                 }
                 if (selected.includes("edop")) {
                     if (feature.properties["Article Type"] == "Editorial or Opinion Piece") {
-                        return true;
+                        return checkpress(feature, selected);
                     }
                 }
                 if (selected.includes("letter")) {
                     if (feature.properties["Article Type"] == "Letter to the Editor") {
-                        return true;
+                        return checkpress(feature, selected);
                     }
                 }
                 if (selected.includes("news")) {
                     if (feature.properties["Article Type"] == "News Article") {
-                        return true;
+                        return checkpress(feature, selected);
                     }
                 }
                 if (selected.includes("other")) {
                     if (feature.properties["Article Type"] == "Other") {
-                        return true;
+                        return checkpress(feature, selected);
                     }
+                }
+                if ((selected.includes("Black") || selected.includes("Jewish") || selected.includes("Spanish") || selected.includes("College") || selected.includes("Catholic")) &&
+                (!selected.includes("cartoon") && !selected.includes("edop") && !selected.includes("letter") && !selected.includes("news") && !selected.includes("other"))) {
+                    return checkpress(feature, selected);
                 } else {
                     return false;
                 }
@@ -199,12 +218,11 @@ $('#checkboxes input').on('click', function () {
 
         map.addLayer(markers);
     }
-
-    console.log(selected);
 });
 
 $('#refresh').on('click', function () {
     map.setView([39, -96], 5);
     sidebar.close();
     map.closePopup();
+    $('input[type=checkbox]').prop('checked',false).trigger('change');
 });
