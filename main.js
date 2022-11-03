@@ -68,6 +68,7 @@ function onEachFeature(feature, layer) {
     });
 }
 
+// Add states chloropleth
 geojson = L.geoJson(statesData, {
     style: style,
     onEachFeature: onEachFeature
@@ -137,7 +138,7 @@ var allmarkers = L.geoJSON(geojsonFeatures, {
     onEachFeature: log
 });
 
-var markers = L.markerClusterGroup({singleMarkerMode: true});
+var markers = L.markerClusterGroup();
 markers.addLayer(allmarkers);
 map.addLayer(markers);
 
