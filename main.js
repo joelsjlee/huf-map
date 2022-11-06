@@ -263,3 +263,5 @@ function handleCommand() {
 }
 
 document.getElementById("toggleCluster").addEventListener("click", handleCommand, false);
+
+sidebar.open("about");
