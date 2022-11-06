@@ -91,6 +91,17 @@ info.update = function (props) {
 
 info.addTo(map);
 
+// Add toggle cluster checkbox to the map
+var toggleCluster = L.control({ position: "topleft" });
+
+toggleCluster.onAdd = function (map) {
+    var div = L.DomUtil.create('div', 'toggleClusterDiv');
+
+    div.innerHTML = '<form><input id="toggleCluster" type="checkbox"/>Display Unclustered Markers</form>';
+    return div;
+};
+
+toggleCluster.addTo(map);
 
 // Adding Side Bar to map
 var sidebar = L.control.sidebar('sidebar').addTo(map);
@@ -140,11 +151,17 @@ var allmarkers = L.geoJSON(geojsonFeatures, {
 
 var markers = L.markerClusterGroup();
 markers.addLayer(allmarkers);
-map.addLayer(markers);
+
+if (document.getElementById("toggleCluster").checked) {
+    allmarkers.addTo(map);
+} else {
+    map.addLayer(markers);
+}
+
 
 function checkpress(feature, selected) {
     if (selected.includes("Black") || selected.includes("Jewish") || selected.includes("Spanish") || selected.includes("College") || selected.includes("Catholic")) {
-        for (i=0; i<selected.length; i++) {
+        for (i = 0; i < selected.length; i++) {
             if (feature.properties["Type"] == selected[i]) {
                 return true;
             }
@@ -153,30 +170,32 @@ function checkpress(feature, selected) {
     } else {
         return true;
     }
-    
-    
+
+
 }
 
-$('#checkboxes input').on('change', function () {
-    // console.log(markers);
-    // console.log(markers);
-    // console.log(map);
+function updateMarkers() {
     var selected = [];
     $('#checkboxes input:checked').each(function () {
         selected.push($(this).val());
     });
     if (!selected.length) {
         markers.clearLayers();
+        map.removeLayer(allmarkers);
         allmarkers = L.geoJSON(geojsonFeatures, {
             onEachFeature: log
         });
         markers = L.markerClusterGroup();
-
         markers.addLayer(allmarkers);
 
-        map.addLayer(markers);
+        if (document.getElementById("toggleCluster").checked) {
+            allmarkers.addTo(map);
+        } else {
+            map.addLayer(markers);
+        }
     } else {
         markers.clearLayers();
+        map.removeLayer(allmarkers);
         allmarkers = L.geoJSON(geojsonFeatures, {
             onEachFeature: log,
             filter: function (feature, layer) {
@@ -206,7 +225,7 @@ $('#checkboxes input').on('change', function () {
                     }
                 }
                 if ((selected.includes("Black") || selected.includes("Jewish") || selected.includes("Spanish") || selected.includes("College") || selected.includes("Catholic")) &&
-                (!selected.includes("cartoon") && !selected.includes("edop") && !selected.includes("letter") && !selected.includes("news") && !selected.includes("other"))) {
+                    (!selected.includes("cartoon") && !selected.includes("edop") && !selected.includes("letter") && !selected.includes("news") && !selected.includes("other"))) {
                     return checkpress(feature, selected);
                 } else {
                     return false;
@@ -214,16 +233,33 @@ $('#checkboxes input').on('change', function () {
             }
         });
         markers = L.markerClusterGroup();
-
         markers.addLayer(allmarkers);
 
-        map.addLayer(markers);
+        if (document.getElementById("toggleCluster").checked) {
+            allmarkers.addTo(map);
+        } else {
+            map.addLayer(markers);
+        }
     }
+
+}
+
+$('#checkboxes input').on('change', function (e) {
+    updateMarkers();
 });
 
 $('#refresh').on('click', function () {
     map.setView([39, -96], 5);
     sidebar.close();
     map.closePopup();
-    $('input[type=checkbox]').prop('checked',false).trigger('change');
+    $('input[type=checkbox]').prop('checked', false);
+    updateMarkers();
 });
+
+
+// add the event handler
+function handleCommand() {
+    updateMarkers();
+}
+
+document.getElementById("toggleCluster").addEventListener("click", handleCommand, false);
