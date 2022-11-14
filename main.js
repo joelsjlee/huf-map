@@ -2,7 +2,22 @@
 var GeoSearchControl = window.GeoSearch.GeoSearchControl;
 var OpenStreetMapProvider = window.GeoSearch.OpenStreetMapProvider;
 var map = L.map('map', { preferCanvas: false });
-map.setView([39, -96], 5);
+map.setView([39, -83], 4);
+
+function addControlPlaceholders(map) {
+    var corners = map._controlCorners,
+        l = 'leaflet-',
+        container = map._controlContainer;
+
+    function createCorner(vSide, hSide) {
+        var className = l + vSide + ' ' + l + hSide;
+
+        corners[vSide + hSide] = L.DomUtil.create('div', className, container);
+    }
+
+    createCorner('top', 'center');
+}
+addControlPlaceholders(map);
 
 // Adding tile layer to map
 L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -78,7 +93,7 @@ var info = L.control({ position: "topleft" });
 
 info.onAdd = function (map) {
     this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
-    this.update();
+    this.update(); 
     return this._div;
 };
 
@@ -103,6 +118,17 @@ toggleCluster.onAdd = function (map) {
 
 toggleCluster.addTo(map);
 
+var events = L.control({ position: "topcenter" });
+
+events.onAdd = function (map) {
+    var div = L.DomUtil.create('div', 'events');
+
+    div.innerHTML = '<h4>Select Event</h4>' + '<select id=eventSelector><option selected value="nov241942">November 24th,  1942: Nazi Plan to Kill All Jews Confirmed</option><option value="dec171942">December 17th, 1942: Allies Denounce Nazi Plan to \"Exterminate\" the Jews</option></select>';
+    return div;
+};
+
+events.addTo(map);
+
 // Adding Side Bar to map
 var sidebar = L.control.sidebar('sidebar').addTo(map);
 
@@ -111,12 +137,14 @@ var searchControl = new GeoSearchControl({
     provider: new OpenStreetMapProvider(),
     showMarker: false,
     maxMarkers: 4,
-    style: 'bar',
+    style: 'button',
 });
+
 map.addControl(searchControl);
 
 // Grab data from GeoJSON
-var geojsonFeatures = data["features"];
+var nov241942 = nov241942_data["features"];
+var dec171942 = dec171942_data["features"];
 
 // Add functionality for each marker
 function log(feature, layer) {
@@ -144,8 +172,17 @@ function log(feature, layer) {
     layer.bindPopup('<h2>' + feature.properties["Headline"] + '</h2><p> ' + feature.properties["Sub Headline"] + '<br>' + '<em>' + feature.properties["Publication Date"] + '</em>' + '</p>')
 }
 
+function eventReturner() {
+    var currEvent = $('#eventSelector option:selected').val();
+    if (currEvent == "nov241942") {
+        return nov241942;
+    } else if (currEvent == "dec171942") {
+        return dec171942;
+    }
+}
+
 // Add all base markers
-var allmarkers = L.geoJSON(geojsonFeatures, {
+var allmarkers = L.geoJSON(eventReturner(), {
     onEachFeature: log
 });
 
@@ -182,7 +219,7 @@ function updateMarkers() {
     if (!selected.length) {
         markers.clearLayers();
         map.removeLayer(allmarkers);
-        allmarkers = L.geoJSON(geojsonFeatures, {
+        allmarkers = L.geoJSON(eventReturner(), {
             onEachFeature: log
         });
         markers = L.markerClusterGroup();
@@ -196,7 +233,7 @@ function updateMarkers() {
     } else {
         markers.clearLayers();
         map.removeLayer(allmarkers);
-        allmarkers = L.geoJSON(geojsonFeatures, {
+        allmarkers = L.geoJSON(eventReturner(), {
             onEachFeature: log,
             filter: function (feature, layer) {
                 if (selected.includes("cartoon")) {
@@ -256,9 +293,16 @@ $('#refresh').on('click', function () {
     updateMarkers();
 });
 
+$('select').on('change', function (e) {
+    updateMarkers();
+});
+
 
 // add the event handler
 function handleCommand() {
+    sidebar.close();
+    map.closePopup();
+    $('input[type=checkbox]').prop('checked', false);
     updateMarkers();
 }
 
