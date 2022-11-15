@@ -295,17 +295,10 @@ $('#refresh').on('click', function () {
 
 $('select').on('change', function (e) {
     updateMarkers();
-});
-
-
-// add the event handler
-function handleCommand() {
     sidebar.close();
     map.closePopup();
-    $('input[type=checkbox]').prop('checked', false);
-    updateMarkers();
-}
+});
 
-document.getElementById("toggleCluster").addEventListener("click", handleCommand, false);
+document.getElementById("toggleCluster").addEventListener("click", updateMarkers, false);
 
 sidebar.open("about");
