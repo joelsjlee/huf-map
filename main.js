@@ -295,7 +295,6 @@ $('#refresh').on('click', function () {
 
 $('select').on('change', function (e) {
     updateMarkers();
-    sidebar.close();
     map.closePopup();
 });
 
