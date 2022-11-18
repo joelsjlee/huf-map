@@ -1,9 +1,23 @@
 // Setting up map and necessary libraries
+// Adding tile layer to map
+var OpenStreetMap = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 18,
+    attribution: 'Map data &copy; OpenStreetMap contributors'
+});
+
+var Esri_NatGeoWorldMap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}', {
+	attribution: 'Tiles &copy; Esri &mdash; National Geographic, Esri, DeLorme, NAVTEQ, UNEP-WCMC, USGS, NASA, ESA, METI, NRCAN, GEBCO, NOAA, iPC',
+	maxZoom: 16
+});
+
+var Esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+	attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+});
+
 var GeoSearchControl = window.GeoSearch.GeoSearchControl;
 var OpenStreetMapProvider = window.GeoSearch.OpenStreetMapProvider;
-var map = L.map('map', { preferCanvas: false });
+var map = L.map('map', { preferCanvas: false, layers: [OpenStreetMap, Esri_NatGeoWorldMap, Esri_WorldImagery] });
 map.setView([39, -83], 4);
-
 function addControlPlaceholders(map) {
     var corners = map._controlCorners,
         l = 'leaflet-',
@@ -19,11 +33,14 @@ function addControlPlaceholders(map) {
 }
 addControlPlaceholders(map);
 
-// Adding tile layer to map
-L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 18,
-    attribution: 'Map data &copy; OpenStreetMap contributors'
-}).addTo(map);
+var baseMaps = {
+    "Esri World Image": Esri_WorldImagery,
+    "Esri NatGeo Map": Esri_NatGeoWorldMap,
+    "OpenStreetMap": OpenStreetMap,
+};
+
+
+var layerControl = L.control.layers(baseMaps, null, {position:"topleft"}).addTo(map);
 
 function getColor(d) {
     return d > 1000 ? '#800026' :
