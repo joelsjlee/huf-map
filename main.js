@@ -1,6 +1,5 @@
 // Setting up map and necessary libraries
-
-// Adding tile layer to map
+// Adding tile layers to map
 var OpenStreetMap = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 18,
     attribution: 'Map data &copy; OpenStreetMap contributors'
@@ -15,10 +14,24 @@ var Esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest
 	attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
 });
 
+// Setting up the Geosearch window
 var GeoSearchControl = window.GeoSearch.GeoSearchControl;
 var OpenStreetMapProvider = window.GeoSearch.OpenStreetMapProvider;
+
+// Setting the initial map in place
 var map = L.map('map', { preferCanvas: false, layers: [OpenStreetMap, Esri_NatGeoWorldMap, Esri_WorldImagery] });
 map.setView([39, -83], 4);
+
+// Setting up the basemaps
+var baseMaps = {
+    "Esri World Image": Esri_WorldImagery,
+    "Esri NatGeo Map": Esri_NatGeoWorldMap,
+    "OpenStreetMap": OpenStreetMap,
+};
+
+var layerControl = L.control.layers(baseMaps, null, {position:"topleft"}).addTo(map);
+
+// Code used to be able to add control layers to the middle of the map
 function addControlPlaceholders(map) {
     var corners = map._controlCorners,
         l = 'leaflet-',
@@ -34,16 +47,8 @@ function addControlPlaceholders(map) {
 }
 addControlPlaceholders(map);
 
-var baseMaps = {
-    "Esri World Image": Esri_WorldImagery,
-    "Esri NatGeo Map": Esri_NatGeoWorldMap,
-    "OpenStreetMap": OpenStreetMap,
-};
-
-
-var layerControl = L.control.layers(baseMaps, null, {position:"topleft"}).addTo(map);
-
-function getColora(d) {
+// original function to get colors by class
+function getColor_exp(d) {
     return d > 500 ? '#800026' :
         d > 300 ? '#BD0026' :
             d > 150 ? '#E31A1C' :
@@ -54,12 +59,14 @@ function getColora(d) {
                                 '#FFEDA0';
 }
 
+// scaled way to get colors with chroma js
 function getColor(d) {
     var mapScale = chroma.scale(['#FED976', '#BD0026'])
       .classes([5,10,25,50,100,200,300,500]);
     return mapScale(d)
 }
 
+// Styling and features for the hover tool
 function style(feature) {
     return {
         fillColor: getColor(feature.properties.density),
@@ -93,8 +100,6 @@ function resetHighlight(e) {
     info.update();
 }
 
-
-
 function zoomToFeature(e) {
     map.fitBounds(e.target.getBounds());
 }
@@ -113,6 +118,7 @@ geojson = L.geoJson(statesData, {
     onEachFeature: onEachFeature
 }).addTo(map);
 
+// Creating the info box that will hold the states demographic data
 var info = L.control({ position: "topleft" });
 
 info.onAdd = function (map) {
@@ -128,10 +134,12 @@ info.onAdd = function (map) {
 //         : 'Hover over a state');
 // };
 
+// Regex function to turn json number to thousands commas
 function addThousandsSeparator(n) {
     return n.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
 }
 
+// Update function for the box, along with its HTML
 info.update = function (props) {
     this._div.innerHTML = '<h4>US Population Density</h4> <h4>1940 US Census</h4>' +  (props ?
         '<b>' + props.name + '</b><br />' + props.density + ' people / mi<sup>2</sup>' + '<br /> ' + addThousandsSeparator(props.population + '') + ' total'
@@ -152,6 +160,7 @@ toggleCluster.onAdd = function (map) {
 
 toggleCluster.addTo(map);
 
+// Creating the Dropdown for the events
 var events = L.control({ position: "topcenter" });
 
 events.onAdd = function (map) {
@@ -206,6 +215,7 @@ function log(feature, layer) {
     layer.bindPopup('<h2>' + feature.properties["Headline"] + '</h2><p> ' + feature.properties["Sub Headline"] + '<br>' + '<em>' + feature.properties["Publication Date"] + '</em>' + '</p>')
 }
 
+// This function returns the type of event and json data
 function eventReturner() {
     var currEvent = $('#eventSelector option:selected').val();
     if (currEvent == "nov241942") {
@@ -223,13 +233,14 @@ var allmarkers = L.geoJSON(eventReturner(), {
 var markers = L.markerClusterGroup();
 markers.addLayer(allmarkers);
 
+// Initial check for adding the markers to the map
 if (document.getElementById("toggleCluster").checked) {
     allmarkers.addTo(map);
 } else {
     map.addLayer(markers);
 }
 
-
+// This function checks the rows of the database and is called to verify if it is one of the minority presses
 function checkpress(feature, selected) {
     if (selected.includes("Black") || selected.includes("Jewish") || selected.includes("Spanish") || selected.includes("College") || selected.includes("Catholic")) {
         for (i = 0; i < selected.length; i++) {
@@ -245,6 +256,7 @@ function checkpress(feature, selected) {
 
 }
 
+// This is the main function that updates the markers each time a check mark or etc is checked off.
 function updateMarkers() {
     var selected = [];
     $('#checkboxes input:checked').each(function () {
@@ -315,6 +327,7 @@ function updateMarkers() {
 
 }
 
+// Sets of Jquery functions that call update markers
 $('#checkboxes input').on('change', function (e) {
     updateMarkers();
 });
