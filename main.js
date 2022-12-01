@@ -1,4 +1,5 @@
 // Setting up map and necessary libraries
+
 // Adding tile layer to map
 var OpenStreetMap = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 18,
@@ -42,15 +43,21 @@ var baseMaps = {
 
 var layerControl = L.control.layers(baseMaps, null, {position:"topleft"}).addTo(map);
 
-function getColor(d) {
-    return d > 1000 ? '#800026' :
-        d > 500 ? '#BD0026' :
-            d > 200 ? '#E31A1C' :
-                d > 100 ? '#FC4E2A' :
+function getColora(d) {
+    return d > 500 ? '#800026' :
+        d > 300 ? '#BD0026' :
+            d > 150 ? '#E31A1C' :
+                d > 75 ? '#FC4E2A' :
                     d > 50 ? '#FD8D3C' :
                         d > 20 ? '#FEB24C' :
                             d > 10 ? '#FED976' :
                                 '#FFEDA0';
+}
+
+function getColor(d) {
+    var mapScale = chroma.scale(['#FED976', '#BD0026'])
+      .classes([5,10,25,50,100,200,300,500]);
+    return mapScale(d)
 }
 
 function style(feature) {
@@ -114,10 +121,20 @@ info.onAdd = function (map) {
     return this._div;
 };
 
-// method that we will use to update the control based on feature properties passed
+// // method that we will use to update the control based on feature properties passed
+// info.update = function (props) {
+//     this._div.innerHTML = '<h4>US States</h4>' + (props ?
+//         '<b>' + props.name
+//         : 'Hover over a state');
+// };
+
+function addThousandsSeparator(n) {
+    return n.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+}
+
 info.update = function (props) {
-    this._div.innerHTML = '<h4>US States</h4>' + (props ?
-        '<b>' + props.name
+    this._div.innerHTML = '<h4>US Population Density</h4> <h4>1940 US Census</h4>' +  (props ?
+        '<b>' + props.name + '</b><br />' + props.density + ' people / mi<sup>2</sup>' + '<br /> ' + addThousandsSeparator(props.population + '') + ' total'
         : 'Hover over a state');
 };
 

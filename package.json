@@ -1,0 +1,28 @@
+{
+  "name": "huf-map",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "dependencies": {
+    "chroma-js": "^2.4.2",
+    "leaflet-geosearch": "^3.7.0",
+    "leaflet-pixi-overlay": "^1.8.2",
+    "leaflet-sidebar": "^0.2.4",
+    "sidebar-v2": "^0.4.0"
+  },
+  "type": "module",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joelsjlee/huf-map.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/joelsjlee/huf-map/issues"
+  },
+  "homepage": "https://github.com/joelsjlee/huf-map#readme"
+}
