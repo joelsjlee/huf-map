@@ -19,14 +19,14 @@ var GeoSearchControl = window.GeoSearch.GeoSearchControl;
 var OpenStreetMapProvider = window.GeoSearch.OpenStreetMapProvider;
 
 // Setting the initial map in place
-var map = L.map('map', { preferCanvas: false, layers: [OpenStreetMap, Esri_NatGeoWorldMap, Esri_WorldImagery] });
+var map = L.map('map', { preferCanvas: false, layers: [Esri_NatGeoWorldMap] });
 map.setView([39, -83], 4);
 
 // Setting up the basemaps
 var baseMaps = {
-    "Esri World Image": Esri_WorldImagery,
     "Esri NatGeo Map": Esri_NatGeoWorldMap,
     "OpenStreetMap": OpenStreetMap,
+    "Esri World Image": Esri_WorldImagery,
 };
 
 var layerControl = L.control.layers(baseMaps, null, {position:"topleft"}).addTo(map);
