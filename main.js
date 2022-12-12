@@ -19,6 +19,10 @@ var GeoSearchControl = window.GeoSearch.GeoSearchControl;
 var OpenStreetMapProvider = window.GeoSearch.OpenStreetMapProvider;
 
 // Setting the initial map in place
+/*
+From Leaflet tutorial: Also note that when using multiple base layers, only one of them should be added to the map at instantiation, 
+but all of them should be present in the base layers object when creating the layers control.
+*/
 var map = L.map('map', { preferCanvas: false, layers: [Esri_NatGeoWorldMap] });
 map.setView([39, -83], 4);
 
@@ -126,13 +130,6 @@ info.onAdd = function (map) {
     this.update(); 
     return this._div;
 };
-
-// // method that we will use to update the control based on feature properties passed
-// info.update = function (props) {
-//     this._div.innerHTML = '<h4>US States</h4>' + (props ?
-//         '<b>' + props.name
-//         : 'Hover over a state');
-// };
 
 // Regex function to turn json number to thousands commas
 function addThousandsSeparator(n) {
