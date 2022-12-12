@@ -237,20 +237,46 @@ if (document.getElementById("toggleCluster").checked) {
     map.addLayer(markers);
 }
 
+// Dynamically add the checkboxes for the wire stories
+for (key of nov_25_key) {
+    $('#wire')
+    .append(`<input type="checkbox" id="${key['Text_id']}" name="interest" value="${key['Id']}">`)
+    .append(`<label for="${key['Text_id']}">${key['Header']}</label></div>`)
+    .append(`<br>`);
+}
+
+
 // This function checks the rows of the database and is called to verify if it is one of the minority presses
 function checkpress(feature, selected) {
     if (selected.includes("Black") || selected.includes("Jewish") || selected.includes("Spanish") || selected.includes("College") || selected.includes("Catholic")) {
         for (i = 0; i < selected.length; i++) {
             if (feature.properties["Type"] == selected[i]) {
+                return checkwire(feature, selected);
+            }
+        }
+        return false;
+    } else {
+        return checkwire(feature, selected);
+    }
+}
+
+function checkwire(feature, selected) {
+    wires = []
+    for (i = 0; i < Object.keys(nov_25_key).length; i++) {
+        if (selected.includes(String(i))) {
+            wires.push(i);
+        }
+    }
+    if (wires.length) {
+        for (i = 0; i <selected.length; i++) {
+            if (feature.properties["label"] == selected[i]) {
                 return true;
             }
         }
         return false;
     } else {
         return true;
-    }
-
-
+}
 }
 
 // This is the main function that updates the markers each time a check mark or etc is checked off.
@@ -306,8 +332,19 @@ function updateMarkers() {
                 }
                 if ((selected.includes("Black") || selected.includes("Jewish") || selected.includes("Spanish") || selected.includes("College") || selected.includes("Catholic")) &&
                     (!selected.includes("cartoon") && !selected.includes("edop") && !selected.includes("letter") && !selected.includes("news") && !selected.includes("other"))) {
+                        return checkpress(feature, selected);
+                } 
+                wires = []
+                for (i = 0; i < Object.keys(nov_25_key).length; i++) {
+                    if (selected.includes(String(i))) {
+                        wires.push(i);
+                    }
+                }
+                if (wires.length && ((!selected.includes("Black") && !selected.includes("Jewish") && !selected.includes("Spanish") && !selected.includes("College") && !selected.includes("Catholic")) &&
+                (!selected.includes("cartoon") && !selected.includes("edop") && !selected.includes("letter") && !selected.includes("news") && !selected.includes("other")))) {
                     return checkpress(feature, selected);
-                } else {
+                }
+                {
                     return false;
                 }
             }
@@ -329,12 +366,38 @@ $('#checkboxes input').on('change', function (e) {
     updateMarkers();
 });
 
+function wireUpdate() {
+    var selected = [];
+    $('#wire input:checked').each(function () {
+        selected.push($(this).val());
+    });
+    $('#story-text').empty();
+    if (selected.length) {
+        for (key of selected) {
+            var obj = nov_25_key.filter(function(nov_25_key) {
+                return nov_25_key['Id'] == key
+            })[0];
+            $('#story-text')
+            .append(`<h3>${obj['Header']}</h3>`)
+            .append(`<p>${obj['Text']}</p>`)
+            .append(`<br>`);
+        }
+    
+    }
+}
+
+$('#wire').on('change', function (e) {
+    wireUpdate()
+})
+
 $('#refresh').on('click', function () {
     map.setView([39, -96], 5);
     sidebar.close();
     map.closePopup();
     $('input[type=checkbox]').prop('checked', false);
+    $('#wire input[type=checkbox]').prop('checked', false);
     updateMarkers();
+    wireUpdate();
 });
 
 $('select').on('change', function (e) {
