@@ -222,6 +222,15 @@ function eventReturner() {
     }
 }
 
+function wireReturner() {
+    var currEvent = $('#eventSelector option:selected').val();
+    if (currEvent == "nov241942") {
+        return nov_25_key;
+    } else if (currEvent == "dec171942") {
+        return nov_25_key;
+    }
+}
+
 // Add all base markers
 var allmarkers = L.geoJSON(eventReturner(), {
     onEachFeature: log
@@ -238,7 +247,7 @@ if (document.getElementById("toggleCluster").checked) {
 }
 
 // Dynamically add the checkboxes for the wire stories
-for (key of nov_25_key) {
+for (key of wireReturner()) {
     $('#wire')
     .append(`<input type="checkbox" id="${key['Text_id']}" name="interest" value="${key['Id']}">`)
     .append(`<label for="${key['Text_id']}">${key['Header']}</label></div>`)
@@ -262,7 +271,7 @@ function checkpress(feature, selected) {
 
 function checkwire(feature, selected) {
     wires = []
-    for (i = 0; i < Object.keys(nov_25_key).length; i++) {
+    for (i = 0; i < Object.keys(wireReturner()).length; i++) {
         if (selected.includes(String(i))) {
             wires.push(i);
         }
@@ -335,7 +344,7 @@ function updateMarkers() {
                         return checkpress(feature, selected);
                 } 
                 wires = []
-                for (i = 0; i < Object.keys(nov_25_key).length; i++) {
+                for (i = 0; i < Object.keys(wireReturner()).length; i++) {
                     if (selected.includes(String(i))) {
                         wires.push(i);
                     }
@@ -368,14 +377,15 @@ $('#checkboxes input').on('change', function (e) {
 
 function wireUpdate() {
     var selected = [];
+    currWire = wireReturner();
     $('#wire input:checked').each(function () {
         selected.push($(this).val());
     });
     $('#story-text').empty();
     if (selected.length) {
         for (key of selected) {
-            var obj = nov_25_key.filter(function(nov_25_key) {
-                return nov_25_key['Id'] == key
+            var obj = currWire.filter(function(currWire) {
+                return currWire['Id'] == key
             })[0];
             $('#story-text')
             .append(`<h3>${obj['Header']}</h3>`)
